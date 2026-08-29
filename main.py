@@ -1,4 +1,5 @@
 import pygame
+import moves
 
 pygame.init()
 
@@ -67,6 +68,9 @@ class Game:
         highlight.fill((100, 200, 255, 150))
         self.screen.blit(highlight, (col * CELLSIZE, row * CELLSIZE))
 
+    def draw_piece_moves(self):
+        pass
+
     def download_assets(self, path="images/"):
         pieces = {}
         colors = ["white", "black"]
@@ -80,8 +84,29 @@ class Game:
 
         return pieces
 
-    def check_for_piece(self, pos_x, pos_y):
+    def get_piece_moves(self, pos_x, pos_y, board):
         col, row = self.pos_to_cell(pos_x, pos_y)
+
+        piece = board[col][row]
+
+        if not piece:
+            return []
+
+        color, piece = piece.split("_")
+
+        match piece:
+            case "пешка":
+                moves.get_pawn_moves()
+            case "слон":
+                moves.get_bishop_moves()
+            case "конь":
+                moves.get_knight_moves()
+            case "ладья":
+                moves.get_rook_moves()
+            case "ферзь":
+                moves.get_queen_moves()
+            case "король":
+                moves.get_king_moves()
 
     def handle_events(self):
         for event in pygame.event.get():

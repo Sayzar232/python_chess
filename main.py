@@ -15,6 +15,7 @@ class Game:
         "Инициализация объекта класса"
         self.pos_x = None
         self.pos_y = None
+        self.selected_piece = None
 
         self.board = [
             ["black_ладья","black_конь","black_слон","black_ферзь","black_король","black_слон","black_конь","black_ладья"],
@@ -121,13 +122,34 @@ class Game:
 
         return []
 
+    def check_for_move(self, moves, pos_x, pos_y):
+        col, row = self.pos_to_index(pos_x, pos_y)
+        return (col, row) in moves
+
+    def move_piece(self, col, row, selected_piece):
+        if not selected_piece:
+            return
+
+        self.board[col][row] = self.board[selected_piece[0]][selected_piece[1]]
+        self.board[selected_piece[0]][selected_piece[1]] = 0
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
             elif event.type == pygame.MOUSEBUTTONUP:
+                moves = self.get_piece_moves(self.pos_x, self.pos_y, self.board)
+
                 pos = pygame.mouse.get_pos()
                 self.pos_x, self.pos_y = pos
+
+                col, row = self.pos_to_index(self.pos_x, self.pos_y)
+
+                if self.board[col][row]:
+                    self.selected_piece = (col, row)
+
+                if self.check_for_move(moves, self.pos_x, self.pos_y):
+                    self.move_piece(col, row, self.selected_piece)
 
         return True
 

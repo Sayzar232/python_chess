@@ -5,6 +5,8 @@ def get_pawn_moves(col, row, color, board):
 
     if not board[col + move_side][row]:
         moves.append((col + move_side, row))
+    else:
+        return moves
 
     if color == "black" and col == 1:
         if not board[col + 2 * move_side][row]:

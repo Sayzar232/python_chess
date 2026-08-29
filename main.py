@@ -38,6 +38,11 @@ class Game:
         "При выходе из игры"
         pygame.quit()
 
+    def pos_to_index(self, pos_x, pos_y):
+        row = pos_x // CELLSIZE
+        col = pos_y // CELLSIZE
+        return col, row
+
     def pos_to_cell(self, pos_x, pos_y):
         pos_x = pos_x // CELLSIZE
         pos_y = pos_y // CELLSIZE
@@ -68,8 +73,11 @@ class Game:
         highlight.fill((100, 200, 255, 150))
         self.screen.blit(highlight, (col * CELLSIZE, row * CELLSIZE))
 
-    def draw_piece_moves(self):
-        pass
+    def draw_piece_moves(self, moves):
+        for row, col in moves:
+            highlight = pygame.Surface((CELLSIZE, CELLSIZE), pygame.SRCALPHA)
+            highlight.fill((100, 255, 200, 150))
+            self.screen.blit(highlight, (col * CELLSIZE, row * CELLSIZE))
 
     def download_assets(self, path="images/"):
         pieces = {}
@@ -85,7 +93,10 @@ class Game:
         return pieces
 
     def get_piece_moves(self, pos_x, pos_y, board):
-        col, row = self.pos_to_cell(pos_x, pos_y)
+        if not pos_x or not pos_y:
+            return []
+
+        col, row = self.pos_to_index(pos_x, pos_y)
 
         piece = board[col][row]
 
@@ -96,17 +107,19 @@ class Game:
 
         match piece:
             case "пешка":
-                moves.get_pawn_moves()
+                return moves.get_pawn_moves(col, row, color, board)
             case "слон":
-                moves.get_bishop_moves()
+                return moves.get_bishop_moves(col, row, color, board)
             case "конь":
-                moves.get_knight_moves()
+                return moves.get_knight_moves(col, row, color, board)
             case "ладья":
-                moves.get_rook_moves()
+                return moves.get_rook_moves(col, row, color, board)
             case "ферзь":
-                moves.get_queen_moves()
+                return moves.get_queen_moves(col, row, color, board)
             case "король":
-                moves.get_king_moves()
+                return moves.get_king_moves(col, row, color, board)
+
+        return []
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -127,6 +140,8 @@ class Game:
             self.draw_board()
             self.draw_selected_cell(self.pos_x, self.pos_y)
             self.draw_pieces(self.board, self.pieces_assets)
+            moves = self.get_piece_moves(self.pos_x, self.pos_y, self.board)
+            self.draw_piece_moves(moves)
 
             pygame.display.update()
             self.clock.tick(60)

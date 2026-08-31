@@ -133,6 +133,8 @@ class Game:
         self.board[col][row] = self.board[selected_piece[0]][selected_piece[1]]
         self.board[selected_piece[0]][selected_piece[1]] = 0
 
+        self.pos_x, self.pos_y = selected_piece[1] * CELLSIZE, selected_piece[0] * CELLSIZE
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -145,7 +147,7 @@ class Game:
 
                 col, row = self.pos_to_index(self.pos_x, self.pos_y)
 
-                if self.board[col][row]:
+                if self.board[col][row] and (col, row) not in moves:
                     self.selected_piece = (col, row)
 
                 if self.check_for_move(moves, self.pos_x, self.pos_y):

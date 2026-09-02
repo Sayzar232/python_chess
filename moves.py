@@ -33,6 +33,10 @@ def get_pawn_moves(col, row, color, board):
 
 
 def get_bishop_moves(col, row, color, board):
+    moves = []
+
+    
+
     return []
 
 

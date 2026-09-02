@@ -15,6 +15,7 @@ class Game:
         "Инициализация объекта класса"
         self.pos_x = None
         self.pos_y = None
+        self.move_color = "white"
         self.selected_piece = None
 
         self.board = [
@@ -99,6 +100,9 @@ class Game:
 
         col, row = self.pos_to_index(pos_x, pos_y)
 
+        if board[col][row] and board[col][row].split("_")[0] != self.move_color:
+            return []
+
         piece = board[col][row]
 
         if not piece:
@@ -134,6 +138,8 @@ class Game:
         self.board[selected_piece[0]][selected_piece[1]] = 0
 
         self.pos_x, self.pos_y = selected_piece[1] * CELLSIZE, selected_piece[0] * CELLSIZE
+
+        self.move_color = "black" if self.move_color == "white" else "white"
 
     def handle_events(self):
         for event in pygame.event.get():

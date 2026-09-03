@@ -76,6 +76,39 @@ def get_bishop_moves(col, row, color, board):
     return moves
 
 
+def get_rook_moves(col, row, color, board):
+    moves = []
+
+    piece_directions = [
+        (1, 0),
+        (0, 1),
+        (-1, 0),
+        (0, -1)
+    ]
+
+    for move in piece_directions:
+        for i in range(1, 8):
+            coord = (move[0] * i + col, move[1] * i + row)
+
+            if not is_valid_move(*coord):
+                break
+
+            take_piece = get_take_piece_color(board, coord)
+
+            # If cell is empty
+            if not take_piece:
+                moves.append(coord)
+            # If cell is teammate
+            elif take_piece == color:
+                break
+                # If cell is opponent
+            else:
+                moves.append(coord)
+                break
+
+    return moves
+
+
 def get_knight_moves(col, row, color, board):
     moves = []
 
@@ -104,12 +137,11 @@ def get_knight_moves(col, row, color, board):
     return moves
 
 
-def get_rook_moves(col, row, color, board):
-    return []
-
-
 def get_queen_moves(col, row, color, board):
-    return []
+    horizontal_moves = get_rook_moves(col, row, color, board)
+    diagonal_moves = get_bishop_moves(col, row, color, board)
+
+    return horizontal_moves + diagonal_moves
 
 
 def get_king_moves(col, row, color, board):

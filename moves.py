@@ -35,9 +35,36 @@ def get_pawn_moves(col, row, color, board):
 def get_bishop_moves(col, row, color, board):
     moves = []
 
-    
+    piece_directions = [
+        (1, 1),
+        (1, -1),
+        (-1, 1),
+        (-1, -1)
+    ]
 
-    return []
+    for move in piece_directions:
+        for i in range(1, 8):
+            coord = (move[0] * i + col, move[1] * i + row)
+
+            if not is_valid_move(*coord):
+                break
+
+            cell_color = 0
+            if board[coord[0]][coord[1]]:
+                cell_color = board[coord[0]][coord[1]].split("_")[0]
+
+            # if cell is empty
+            if not cell_color:
+                moves.append(coord)
+            # if cell is teammate
+            elif cell_color == color:
+                break
+            #if cell is opponent
+            else:
+                moves.append(coord)
+                break
+
+    return moves
 
 
 def get_knight_moves(col, row, color, board):

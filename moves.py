@@ -1,5 +1,16 @@
 def is_valid_move(col, row):
+    """Check is move is valid"""
     return 0 <= col < 8 and 0 <= row < 8
+
+
+def get_take_piece_color(board, coord):
+    """Check if cell is empty or has a piece"""
+    take_piece = 0
+    if board[coord[0]][coord[1]]:
+        take_piece = board[coord[0]][coord[1]].split("_")[0]
+
+    return take_piece
+
 
 def get_pawn_moves(col, row, color, board):
     moves = []
@@ -49,17 +60,15 @@ def get_bishop_moves(col, row, color, board):
             if not is_valid_move(*coord):
                 break
 
-            cell_color = 0
-            if board[coord[0]][coord[1]]:
-                cell_color = board[coord[0]][coord[1]].split("_")[0]
+            take_piece = get_take_piece_color(board, coord)
 
-            # if cell is empty
-            if not cell_color:
+            # If cell is empty
+            if not take_piece:
                 moves.append(coord)
-            # if cell is teammate
-            elif cell_color == color:
+            # If cell is teammate
+            elif take_piece == color:
                 break
-            #if cell is opponent
+            # If cell is opponent
             else:
                 moves.append(coord)
                 break
@@ -68,7 +77,31 @@ def get_bishop_moves(col, row, color, board):
 
 
 def get_knight_moves(col, row, color, board):
-    return []
+    moves = []
+
+    piece_directions = [
+        (1, 2),
+        (1, -2),
+        (-1, 2),
+        (-1, -2),
+        (2, 1),
+        (2, -1),
+        (-2, 1),
+        (-2, -1)
+    ]
+
+    for move in piece_directions:
+        coord = (move[0] + col, move[1] + row)
+
+        if not is_valid_move(*coord):
+            continue
+
+        take_piece = get_take_piece_color(board, coord)
+
+        if take_piece != color:
+            moves.append(coord)
+
+    return moves
 
 
 def get_rook_moves(col, row, color, board):

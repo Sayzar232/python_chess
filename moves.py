@@ -167,3 +167,42 @@ def get_king_moves(col, row, color, board):
             moves.append(coord)
 
     return moves
+
+
+def get_all_moves(color, board):
+    moves = []
+
+    for col in range(len(board)):
+        for row, piece in enumerate(board[col]):
+            if not piece:
+                continue
+
+            piece = piece.split("_")[1]
+
+            coord = (col, row)
+
+            piece_color = get_take_piece_color(board, coord)
+
+            if color == piece_color:
+                piece_data = (col, row, color, board)
+                match piece:
+                    case "пешка":
+                        piece_moves = get_pawn_moves(*piece_data)
+                        moves.extend(piece_moves)
+                    case "слон":
+                        piece_moves = get_bishop_moves(*piece_data)
+                        moves.extend(piece_moves)
+                    case "конь":
+                        piece_moves = get_knight_moves(*piece_data)
+                        moves.extend(piece_moves)
+                    case "ладья":
+                        piece_moves = get_rook_moves(*piece_data)
+                        moves.extend(piece_moves)
+                    case "ферзь":
+                        piece_moves = get_queen_moves(*piece_data)
+                        moves.extend(piece_moves)
+                    case "король":
+                        piece_moves = get_king_moves(*piece_data)
+                        moves.extend(piece_moves)
+
+    return moves

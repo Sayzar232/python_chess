@@ -24,6 +24,7 @@ python main.py
 
 ```
 chess/
+├── moves.py
 ├── main.py      # точка входа
 └── README.md
 ```

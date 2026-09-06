@@ -145,4 +145,25 @@ def get_queen_moves(col, row, color, board):
 
 
 def get_king_moves(col, row, color, board):
-    return []
+    moves = []
+
+    piece_directions = []
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            if i == 0 and j == 0:
+                continue
+
+            piece_directions.append((i, j))
+
+    for move in piece_directions:
+        coord = (move[0] + col, move[1] + row)
+
+        if not is_valid_move(*coord):
+            continue
+
+        take_piece = get_take_piece_color(board, coord)
+
+        if take_piece != color:
+            moves.append(coord)
+
+    return moves

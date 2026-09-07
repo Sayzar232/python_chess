@@ -144,7 +144,7 @@ def get_queen_moves(col, row, color, board):
     return horizontal_moves + diagonal_moves
 
 
-def get_king_moves(col, row, color, board):
+def get_all_king_moves(col, row, color, board):
     moves = []
 
     piece_directions = []
@@ -202,7 +202,55 @@ def get_all_moves(color, board):
                         piece_moves = get_queen_moves(*piece_data)
                         moves.extend(piece_moves)
                     case "король":
-                        piece_moves = get_king_moves(*piece_data)
+                        piece_moves = get_all_king_moves(*piece_data)
                         moves.extend(piece_moves)
 
     return moves
+
+
+def get_king_moves(col, row, color, board):
+    moves = []
+    
+    piece_directions = []
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            if i == 0 and j == 0:
+                continue
+    
+            piece_directions.append((i, j))
+
+    for move in piece_directions:
+        coord = (move[0] + col, move[1] + row)
+
+        if not is_valid_move(*coord):
+            continue
+
+        take_piece = get_take_piece_color(board, coord)
+
+        if take_piece != color:
+            board_ = change_king_coord(col, row, get_copy_board(board.copy()), coord)
+            if not is_king_in_check(*coord, color, board_):
+                moves.append(coord)
+
+    return moves
+
+
+def is_king_in_check(col, row, color, board):
+    opponent_color = "black" if color == "white" else "white"
+    opponent_moves = get_all_moves(opponent_color, board)
+
+    return (col, row) in opponent_moves
+
+
+def change_king_coord(col, row, board, coord):
+    if not is_valid_move(col, row):
+        return
+
+    board[coord[0]][coord[1]] = board[col][row]
+    board[col][row] = 0
+
+    return board
+
+
+def get_copy_board(board):
+    return [row.copy() for row in board]

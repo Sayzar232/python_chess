@@ -144,31 +144,6 @@ def get_queen_moves(col, row, color, board):
     return horizontal_moves + diagonal_moves
 
 
-def get_all_king_moves(col, row, color, board):
-    moves = []
-
-    piece_directions = []
-    for i in range(-1, 2):
-        for j in range(-1, 2):
-            if i == 0 and j == 0:
-                continue
-
-            piece_directions.append((i, j))
-
-    for move in piece_directions:
-        coord = (move[0] + col, move[1] + row)
-
-        if not is_valid_move(*coord):
-            continue
-
-        take_piece = get_take_piece_color(board, coord)
-
-        if take_piece != color:
-            moves.append(coord)
-
-    return moves
-
-
 def get_all_moves(color, board):
     moves = []
 
@@ -202,22 +177,16 @@ def get_all_moves(color, board):
                         piece_moves = get_queen_moves(*piece_data)
                         moves.extend(piece_moves)
                     case "король":
-                        piece_moves = get_all_king_moves(*piece_data)
+                        piece_moves = get_unsafe_king_moves(*piece_data)
                         moves.extend(piece_moves)
 
     return moves
 
-
-def get_king_moves(col, row, color, board):
+# King moves logic
+def get_unsafe_king_moves(col, row, color, board):
     moves = []
-    
-    piece_directions = []
-    for i in range(-1, 2):
-        for j in range(-1, 2):
-            if i == 0 and j == 0:
-                continue
-    
-            piece_directions.append((i, j))
+
+    piece_directions = get_king_directions()
 
     for move in piece_directions:
         coord = (move[0] + col, move[1] + row)
@@ -228,11 +197,48 @@ def get_king_moves(col, row, color, board):
         take_piece = get_take_piece_color(board, coord)
 
         if take_piece != color:
-            board_ = change_king_coord(col, row, get_copy_board(board.copy()), coord)
-            if not is_king_in_check(*coord, color, board_):
+            moves.append(coord)
+
+    return moves
+
+
+def get_king_moves(col, row, color, board):
+    moves = []
+    
+    piece_directions = get_king_directions()
+
+    for move in piece_directions:
+        coord = (move[0] + col, move[1] + row)
+
+        if not is_valid_move(*coord):
+            continue
+
+        take_piece = get_take_piece_color(board, coord)
+
+        if take_piece != color:
+            if check_king_moves(col, row, color, board, coord):
                 moves.append(coord)
 
     return moves
+
+
+def get_king_directions():
+    piece_directions = []
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            if i == 0 and j == 0:
+                continue
+        
+            piece_directions.append((i, j))
+
+    return piece_directions
+
+
+def check_king_moves(col, row, color, board, coord):
+    board_ = change_king_coord(col, row, get_copy_board(board.copy()), coord)
+    if not is_king_in_check(*coord, color, board_):
+        return True
+    return False
 
 
 def is_king_in_check(col, row, color, board):

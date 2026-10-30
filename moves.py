@@ -215,29 +215,29 @@ class King(Piece):
             take_piece = get_take_piece_color(board, coord)
     
             if take_piece != self.color:
-                if self.check_king_moves(coord, board):
+                if self.check_king_moves(self.col, self.row, coord, board):
                     moves.append(coord)
     
         return moves
 
-    def check_king_moves(self, coord, board):
-        board_ = self.change_king_coord(coord, get_copy_board(board))
-        if not self.is_king_in_check(board_):
+    def check_king_moves(self, col, row, coord, board):
+        board_ = self.change_king_coord(col, row, coord, get_copy_board(board))
+        if not self.is_king_in_check(*coord, board_):
             return True
         return False
 
-    def is_king_in_check(self, board):
+    def is_king_in_check(self, col, row, board):
         opponent_color = "black" if self.color == "white" else "white"
         opponent_moves = get_all_moves(opponent_color, board)
 
-        return (self.col, self.row) in opponent_moves
+        return (col, row) in opponent_moves
 
-    def change_king_coord(self, coord, board):
-        if not is_valid_move(self.col, self.row):
+    def change_king_coord(self, col, row, coord, board):
+        if not is_valid_move(col, row):
             return
 
-        board[coord[0]][coord[1]] = board[self.col][self.row]
-        board[self.col][self.row] = 0
+        board[coord[0]][coord[1]] = board[col][row]
+        board[col][row] = 0
 
         return board
 
@@ -286,7 +286,7 @@ def get_all_moves(color, board):
                         piece_moves = Rook(*piece_data).get_moves(board)
                         moves.extend(piece_moves)
                     case "ферзь":
-                        piece_move = Queen(*piece_data).get_moves(board)
+                        piece_moves = Queen(*piece_data).get_moves(board)
                         moves.extend(piece_moves)
                     case "король":
                         piece_moves = King(*piece_data).get_moves(board)

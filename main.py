@@ -172,6 +172,8 @@ class Game:
         self.board[col][row] = self.board[selected_piece[0]][selected_piece[1]]
         self.board[selected_piece[0]][selected_piece[1]] = 0
 
+        self.board[col][row].col, self.board[col][row].row = col, row
+
         self.pos_x, self.pos_y = selected_piece[1] * CELLSIZE, selected_piece[0] * CELLSIZE
 
         self.move_color = "black" if self.move_color == "white" else "white"
